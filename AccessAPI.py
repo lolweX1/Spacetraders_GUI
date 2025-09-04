@@ -64,7 +64,21 @@ def accessSystem(id: str, systemName: str):
         return data.json()
 
 
-
+missionExtends = False
 def expandMissions(id: str, missionWidget):
+    global missionExtends
     data = CHILDREN["missions"]
-    missionWidget.setText("hi")
+    # check for all missions and add them
+    if (not missionExtends):
+        if (len(CONTRACTS) == 0):
+            CHILDREN["missionText"].setText("No contracts currently available")
+        else:
+            for m in CONTRACTS:
+                txt = "deadline: " + m["terms"]["deadline"] + ", " + m["type"] + ": " + "deliver " + m["terms"]["deliver"][0]["tradeSymbol"] + " " + str(m["terms"]["deliver"][0]["unitsRequired"])
+                CHILDREN["missionText"].setText(CHILDREN["missions"].text() + "\n" + txt)
+        CHILDREN["missionExpand"].setText("/\\")
+        missionExtends = True
+    else:
+        CHILDREN["missionExpand"].setText("\\/")
+        CHILDREN["missionText"].setText("")
+        missionExtends = False

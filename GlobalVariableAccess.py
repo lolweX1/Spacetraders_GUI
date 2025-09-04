@@ -20,3 +20,5 @@ CHILDREN_CONTAINERS = {
 CHILDREN_DATA = {
     "missionText": ["", ""]
 }
+
+CONTRACTS = []

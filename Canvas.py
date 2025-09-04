@@ -93,7 +93,7 @@ class Canvas(QWidget):
             self.draw_waypoint(waypoint)
     
     def draw_waypoint(self, data):
-        Canvas.drawCircle(data["x"] + int(self.CENTER_POINT[0] + self.position[0]), data["y"] + int(self.CENTER_POINT[1] + self.position[1]), 10, "white", self.pixmap)
+        Canvas.drawCircle(data["x"] + int(self.CENTER_POINT[0] + self.position[0]), data["y"] + int(self.CENTER_POINT[1] + self.position[1]), 5, "white", self.pixmap)
     
     def _tick(self):
         self.detectEvents()
@@ -137,8 +137,8 @@ class Canvas(QWidget):
     def withinRange(Cwidth, Cheight, CPosition, position, ObjectDimen, pixelError):
         # the CPosition is the position of the top left corner
         # the position also uses top left corner
-        if (position[0] + ObjectDimen[0] >= CPosition[0] - Cwidth/2 and 
-            position[1] + ObjectDimen[1] >= CPosition[1] - Cheight/2 and 
+        if (position[0] >= CPosition[0] - Cwidth/2 and 
+            position[1] >= CPosition[1] - Cheight/2 and 
             position[0] <= CPosition[0] + Cwidth/2 and 
             position[1] <= CPosition[1] + Cheight/2):
             return True

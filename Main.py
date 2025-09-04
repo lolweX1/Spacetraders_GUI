@@ -34,13 +34,11 @@ if (data and missions and ships):
     CURRENT_SYSTEM_WAYPOINTS.clear()
     CURRENT_SYSTEM_WAYPOINTS.extend(system["data"]["waypoints"])
 
+    CONTRACTS.extend(missions["data"])
+
     #assign buttons functions
     CHILDREN["missionExpand"].clicked.connect(lambda: expandMissions(ID, CHILDREN["missionText"]))
 
-    # check for all missions and add them
-    for m in missions["data"]:
-        txt = "deadline: " + m["terms"]["deadline"] + ", " + m["type"] + ": " + "deliver " + m["terms"]["deliver"][0]["tradeSymbol"] + " " + str(m["terms"]["deliver"][0]["unitsRequired"])
-        CHILDREN["missionText"].setText(CHILDREN["missions"].text() + "\n" + txt)
 else:
     # if unable to recieve data, close
     print("unable to fetch data, closing window")
