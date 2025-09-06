@@ -1,0 +1,26 @@
+8/26/2025
+-Start of the project. Utilizing PyQt for the GUI and requests library for API handling
+Created 2 access methods: 1 for agent and 1 for missions
+Created windows that will update data
+
+8/27/2025
+made website a bit prettier :)
+Tired, don't wanna do much
+
+9/2/2025
+Added a map with nothing.
+Planning to fill it up with system
+Other plans is to work on formatting.
+Also added tabs
+
+9/3/2025
+Map is now working
+Few things need to be fix before first checkpoint
+1 - it needs to be more interactive, different colors or have text
+2 - there are bugs, sometimes disappearing before its supposed or showing when its nothing
+3 - fix up the GUI for the information
+4 (if possible) - fix up the code (make neater + comments)
+
+9/4/2025
+Debugged, the map is not fixed yet
+The information is better now (specifically the missions)

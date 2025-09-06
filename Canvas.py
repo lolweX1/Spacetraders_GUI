@@ -141,5 +141,5 @@ class Canvas(QWidget):
             position[1] >= CPosition[1] - Cheight/2 and 
             position[0] <= CPosition[0] + Cwidth/2 and 
             position[1] <= CPosition[1] + Cheight/2):
-            return True
+            return True # delete and redo
         return False
