@@ -24,3 +24,8 @@ Few things need to be fix before first checkpoint
 9/4/2025
 Debugged, the map is not fixed yet
 The information is better now (specifically the missions)
+
+9/17/2025
+Optimized code slightly
+Fixed the part where the windows just closes when it can't recieve data
+Added inputs to create players and sign in
