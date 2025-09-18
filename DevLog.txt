@@ -29,3 +29,5 @@ The information is better now (specifically the missions)
 Optimized code slightly
 Fixed the part where the windows just closes when it can't recieve data
 Added inputs to create players and sign in
+Things to do: Work on terminal, make the player creation work and uncommented the works so data is shown 
+Also: continue optimization and comments

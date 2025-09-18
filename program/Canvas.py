@@ -4,6 +4,7 @@ from PyQt6.QtWidgets import (QApplication, QWidget, QPushButton,
 from PyQt6.QtGui import QPainter, QColor, QPen, QPixmap, QKeyEvent
 from PyQt6.QtCore import Qt, QTimer, QPoint
 from GlobalVariableAccess import *
+from LoginWindow import *
 
 class Canvas(QWidget):
     # Initalizing class variables
@@ -81,7 +82,7 @@ class Canvas(QWidget):
     def update_current_system_waypoints(self):
         print("hi")
         self.drawableWaypoints = [[self.position[0], self.position[1]]]
-        area = Canvas.getRange(self.width, self.height, self.positi)
+        area = Canvas.getRange(self.width, self.height, self.position)
         for waypoint in CURRENT_SYSTEM_WAYPOINTS:
                 self.drawableWaypoints.append(waypoint)
         self.solar_data_change = False

@@ -9,6 +9,8 @@ CHILDREN = {
     ,"shipSystem": None
 }
 
+current_player_id = None
+
 ORIGIN = []
 CURRENT_SYSTEM_WAYPOINTS = []
 ALL_SYSTEMS = {}
