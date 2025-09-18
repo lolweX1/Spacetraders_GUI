@@ -1,6 +1,7 @@
 from PyQt6.QtWidgets import QDialog, QLineEdit, QVBoxLayout, QPushButton, QLabel
 import sys
 import requests as rq
+import GlobalVariableAccess as gva
 
 class Login(QDialog):
     def __init__(self):
@@ -31,8 +32,8 @@ class Login(QDialog):
         except Exception as e:
             print("login failure, unable to find agent token")
             print(e)
-            sys.exit()
+            self.message.setText("❌ Invalid token")
         else:
             print("login successful")
-            current_player_id = self.username_input
+            gva.current_auth_token = self.username_input.text()
             self.accept()

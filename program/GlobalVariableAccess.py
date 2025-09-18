@@ -9,7 +9,7 @@ CHILDREN = {
     ,"shipSystem": None
 }
 
-current_player_id = None
+current_auth_token = None
 
 ORIGIN = []
 CURRENT_SYSTEM_WAYPOINTS = []
