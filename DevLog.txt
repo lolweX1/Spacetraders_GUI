@@ -31,3 +31,7 @@ Fixed the part where the windows just closes when it can't recieve data
 Added inputs to create players and sign in
 Things to do: Work on terminal, make the player creation work and uncommented the works so data is shown 
 Also: continue optimization and comments
+
+9/18/2025
+Player tab now has info
+Reorganized tabs, widgets, and layouts 

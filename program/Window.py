@@ -10,6 +10,8 @@ from LoginWindow import *
 from Canvas import *
 import sys
 
+# eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZGVudGlmaWVyIjoiTE9MV0VfWDMiLCJ2ZXJzaW9uIjoidjIuMy4wIiwicmVzZXRfZGF0ZSI6IjIwMjUtMDktMTQiLCJpYXQiOjE3NTgxNTcwNjEsInN1YiI6ImFnZW50LXRva2VuIn0.DXG-3xFP_dklLShC7nC8kZJN9hCjVFy4EjYxJnl5dzBk8xAer6fX5bhM2zlgYyTjcVT2B3jfqoQyGZdhzzGywXqTS0l2Gs13FK3UDC5vOGIcyiyYjluTH2q52JUW4z3fGDG4lOHkU82wx7PgP7pucM_rDzKMjEG99__UdXgH3Ao0hIAC78S8CfNjOg1NkxrESGWryKsYW_tNTMQ6RDcJpP9HxpVLNxL-LPCFM6XnHuh3_TJRk_yhQ9oncA5hlV7eGS7ZWgw93B94lEOmDP_nYCX5-KDZrdA80WHufsdracbahAqoRmn8-tXXRNnFZIqckL8MCkRsZepp9e8bo8sL0VIAJV3bXCsmQkKndbEt8pOgeHy2w7CqFbKFRUvM-dvyamnmotSGolZaMluqZQeFxwj5m1cMG1CvZbjjPZWTpxhmbD_CG_N-H_U3DMpquZ6T5jVwNc0_CvVfTn_uAggOwQzKJ0AzGZ0VoSGJChNyD-VtipnZg0DyxfebH0b_ch-48BubzyJBR_oy6SZOP-mq7A43eNXwEvixuseBJ2wU8FuWs3A8uPn5qvszKl7JsFw2OA_VDtFlT7jSD3bMuysZLhDepyc_vhrBMfhQ8fwEiPx8aXaHU_V9XuRh5corFlqPXGlmrQ778S8zlTZ0h2ipNbKrRcZhCcfXOKlHiVnPiBo
+
 def create_player(textBox):
     print(textBox.text())
     textBox.clear()
@@ -29,6 +31,16 @@ class MainWindow(QMainWindow):
                 "label": QLabel("Create player: "),
                 "input": QLineEdit(),
                 },
+        }
+
+        # creating set ups through tabs
+        self.player_tab_setup = {
+            "player_data": [{
+                "agent_name": QLabel("Agent name: "),
+                "credits": QLabel("credits: "),
+                "starting_faction": QLabel("starting faction: "),
+                "ship_count": QLabel("ships: ")
+            }, QVBoxLayout()]
         }
 
         # Setting window properties
@@ -59,7 +71,18 @@ class MainWindow(QMainWindow):
                 },
         }
 
-        # login
+        # assign special attributes to certain layouts in player tab
+        self.player_tab_setup["player_data"][1].setSpacing(0)
+
+        # toss all widgets and layout into the window
+        for layout in self.player_tab_setup:
+            for widget in self.player_tab_setup[layout][0]:
+                self.player_tab_setup[layout][1].addWidget(self.player_tab_setup[layout][0][widget])
+                self.player_tab_setup[layout][0][widget].setAlignment(Qt.AlignmentFlag.AlignTop)
+                self.player_tab_setup[layout][0][widget].setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+            self.tab_names["player"]["layout"].addLayout(self.player_tab_setup[layout][1])
+        
+
 
         # creating the player creation input, change to be optimized later 
         self.player_creation_container = QHBoxLayout()
