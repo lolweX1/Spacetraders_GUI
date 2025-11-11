@@ -103,9 +103,11 @@ def determine_prompt(command):
 
     if ("get" in command):
         get_ship_data(command)
+        update_ship_data()
         return ""
     
-    prompt = re.split("(?<!-)-(?!-)", command.replace(" ", ""))
+    prompt = re.split("(?<= )-(?!-)", command)
+    prompt = [i.replace(" ", "") for i in prompt]
     print(prompt)
     match prompt[0]:
         case "nav":
@@ -117,13 +119,13 @@ def determine_prompt(command):
             else:
                 navigate(prompt[1:])
         case "engage":
-            engage_options()
-            command = input("select cmd> ")
-            command = engage_options(command)
-            if (command != "exit"):
-                if (not authorize_ship_engage(command)): # runs authorize_ship_nav
-                    cmd_skip = True
-                    return "engage"
+            if (len(prompt) <= 1):
+                engage_options()
+                command = input("select cmd> ")
+                command = engage_options(command)
+                engage([command])
+            else:
+                engage(prompt[1:])
         case "help":
             print("".join(f"{key} - {commands_help[key]}\n" for key in commands_help))
 

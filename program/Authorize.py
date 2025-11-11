@@ -27,7 +27,6 @@ def auth_access(li, post = False, bd = None):
         print("Unable to fetch data:", e)
         return None
 
-
 def authorize_ship_engage(op):
     return auth_access(f"https://api.spacetraders.io/v2/my/ships/{gva.ship}/{op}", True)
 
@@ -56,7 +55,6 @@ def authorize_ship_nav(op, loc = None):
             print("Unable to fetch data:", e)
             return None
     if (loc):
-        cmd = input("location> ")
         success = access(True, loc)
     elif (op == "navigate"):
         cmd = input("location> ")

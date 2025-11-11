@@ -11,7 +11,7 @@ engage_cmd = ["extract", "cooldown", "exit"]
 
 def navigate(funcs):
     for cmd in funcs:
-        cmd = cmd.replace(" ", "").split("--")
+        cmd = re.split(r'(?<!-)\-\-(?!-)', cmd.replace(" ", ""))
         if cmd[0] in nav_cmd:
             if cmd[0] == "status":
                 print(f"STATUS: {gva.ship_data["nav"]["status"]}")
@@ -19,6 +19,21 @@ def navigate(funcs):
                 return True
             else:
                 authorize_ship_nav(cmd[0], cmd[1] if len(cmd) > 1 else None)
+        else:
+            return False
+        update_ship_data()
+    return True
+
+def engage(funcs):
+    for cmd in funcs:
+        cmd = cmd.replace(" ", "").split("--")
+        if cmd[0] in engage_cmd:
+            if cmd[0] == "cooldown":
+                print(f"COOLDOWN: {gva.ship_data["cooldown"]}")
+            elif cmd[0] == "exit":
+                return True
+            else:
+                authorize_ship_engage(cmd[0])
         else:
             return False
         update_ship_data()
