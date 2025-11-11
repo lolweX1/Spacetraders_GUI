@@ -1,6 +1,9 @@
 import requests as rq
 from AccessAPI import *
 import GlobalVariableAccess as gva
+import re
+from Prompts import *
+from Authorize import *
 # from PyQt6.QtCore import QTimer, Qt
 # from PyQt6.QtWidgets import (QApplication, QWidget, QMainWindow, QPushButton, 
 #                              QVBoxLayout, QLabel, QPushButton, QHBoxLayout, 
@@ -26,44 +29,26 @@ import GlobalVariableAccess as gva
 # PLEASE CHANGE ALL SHIPS GET 0 TO THE SHIP WANTED
 version = "0.32 beta"
 
-print(f"Welcome to Lolwe's UI for Space Trader API\nthis is version {version}\nTo find functions, please use command \"help\"")
+print(f"Welcome to Lolwe's UI for Space Trader API\nversion {version}\nTo find functions, please use command \"help\"")
 
-ship = None
-ship_data = None
-system = None
+commands_help = {
+    "nav": "go into ship navigation mode",
+    "engage": "actions that can be done while docked",
+    "cmdqt": "exit the UI",
+    "subfunctions": "use \"-\" to call multiple subfunctions at once and use \"--\" to put in parameters for each subfunction\nex: nav -navigate --[name of destination]"
+}
+commands = ["nav", "engage", "cmdqt", "help"]
 
 try:
     data = rq.get("https://api.spacetraders.io/v2/my/ships", headers = {"Authorization": "Bearer " + gva.current_auth_token})
     data = data.json()
-    system = data["data"][0]["nav"]["systemSymbol"] # CHANGE
-    ship = data["data"][0]["symbol"] # CHANGE
-    ship_data = data["data"][0] # CHANGE
+    gva.system = data["data"][0]["nav"]["systemSymbol"] # CHANGE
+    gva.ship = data["data"][0]["symbol"] # CHANGE
+    gva.ship_data = data["data"][0] # CHANGE
+    print("data retrieval successful")
 except:
     print("Unable to fetch agent data")
 
-def auth_access(li, post = False, bd = None):
-    try:
-        headers = {"Authorization": f"Bearer {gva.current_auth_token}"}
-
-        if bd is not None:
-            headers["Content-Type"] = "application/json"
-
-        if post:
-            response = rq.post(li, headers=headers, json=bd)
-        else:
-            response = rq.get(li, headers=headers)
-
-        data = response.json()
-
-        if "error" in data:
-            print(f"Error {data['statusCode']}: {data['error']} - {data['message']}")
-            return None
-
-        return data
-
-    except Exception as e:
-        print("Unable to fetch data:", e)
-        return None
 
 def int_convert(s):
     try:
@@ -71,6 +56,7 @@ def int_convert(s):
         return int(s)
     except:
         return None
+
 
 def parent_options(op, sel):
     if (not sel):
@@ -95,83 +81,54 @@ def engage_options(sel = None):
     a = parent_options(op, sel)
     return a
 
-def authorize_ship_engage(op):
-    return auth_access(f"https://api.spacetraders.io/v2/my/ships/{ship}/{op}", True)
-
-def authorize_ship_nav(op):
-    def access(post=True, navi = None): # maybe remove later
-        try:
-            url = f"https://api.spacetraders.io/v2/my/ships/{ship}/{op}"
-            headers = {"Authorization": f"Bearer {gva.current_auth_token}"}
-
-            if navi:  # for navigate
-                headers["Content-Type"] = "application/json"
-                data = {"waypointSymbol": navi}
-                response = rq.post(url, headers=headers, json=data)
-            else:
-                if post:
-                    response = rq.post(url, headers=headers)
-                else:
-                    response = rq.get(url, headers=headers)
-
-            data = response.json()
-            if "error" in data:
-                print(f"Error {data["error"]["code"]}: {data["error"]["message"]} ")
-                return None
-            return data
-        except Exception as e:
-            print("Unable to fetch data:", e)
-            return None
-    if (op == "navigate"):
-        cmd = input("location> ")
-        success = access(True, cmd)
-    else: success = access()
-    return success
-
-def update_ship_data():
-    global ship_data
-    ship_data = auth_access(f"https://api.spacetraders.io/v2/my/ships/{ship}")["data"]
-
 cmd = input("command> ")
-while (cmd != "cmdqt"):
+cmd_skip = False
+
+def get_ship_data(command):
+    command = command.lstrip().split(" ")[1:]
+    if (len(command) == 0):
+        print(gva.ship_data)
+    else:
+        try:
+            print("".join(f"{call}: {gva.ship_data[call]}\n" for call in command))
+        except Exception as e:
+            print(f"parameter: '{e}' does not exist")
+    return ""
+
+def determine_prompt(command):
+    global cmd
+    global cmd_skip
+
     cmd_skip = False
-    if ("get" in cmd):
-        cmd = cmd.lstrip().split(" ")[1:]
-        if (len(cmd) == 0):
-            print(ship_data)
-        else:
-            try:
-                print("".join(f"{call}: {ship_data[call]}\n" for call in cmd))
-            except Exception as e:
-                print(f"parameter: '{e}' does not exist")
-        # print("".join((f"\033[1m{name}\033[0m:" + ("    \n".join(f"{n2}: {ship_data[name][n2]}\n" for n2 in ship_data[name])) if isinstance(ship_data[name], dict) else f"{ship_data[name]}\n") for name in ship_data))
-    elif (cmd == "nav"):
-        flying_options()
-        cmd = input("select cmd> ")
-        cmd = flying_options(cmd)
-        if (cmd == None):
-            cmd = "nav"
-            cmd_skip = True
-        elif (cmd == "status"):
-            print(f"STATUS: {ship_data["nav"]["status"]}")
-            cmd = "nav"
-            cmd_skip = True
-        elif (cmd != "exit"):
-            if (not authorize_ship_nav(cmd)): # runs authorize_ship_nav
-                cmd = "nav"
-                cmd_skip = True
-                continue
-            update_ship_data()
-            print(f"STATUS: {ship_data["nav"]["status"]}")
-    elif (cmd == "engage"):
-        engage_options()
-        cmd = input("select cmd> ")
-        cmd = engage_options(cmd)
-        if (cmd != "exit"):
-            if (not authorize_ship_engage(cmd)): # runs authorize_ship_nav
-                cmd = "engage"
-                cmd_skip = True
-                continue
+
+    if ("get" in command):
+        get_ship_data(command)
+        return ""
+    
+    prompt = re.split("(?<!-)-(?!-)", command.replace(" ", ""))
+    print(prompt)
+    match prompt[0]:
+        case "nav":
+            if (len(prompt) <= 1):
+                flying_options()
+                command = input("select cmd> ")
+                command = flying_options(command)
+                navigate([command])
+            else:
+                navigate(prompt[1:])
+        case "engage":
+            engage_options()
+            command = input("select cmd> ")
+            command = engage_options(command)
+            if (command != "exit"):
+                if (not authorize_ship_engage(command)): # runs authorize_ship_nav
+                    cmd_skip = True
+                    return "engage"
+        case "help":
+            print("".join(f"{key} - {commands_help[key]}\n" for key in commands_help))
+
+while (cmd != "cmdqt"):
+    cmd = determine_prompt(cmd)
     if (not cmd_skip):
         cmd = input("command> ")
 
