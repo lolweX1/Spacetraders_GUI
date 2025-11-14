@@ -9,7 +9,7 @@ from SystemCanvas import *
 nav_cmd = ["orbit", "navigate", "dock", "status", "exit"]
 scan_cmd = ["waypoints", "ships", "systems", "exit"]
 engage_cmd = ["extract", "cooldown", "market", "buy", "sell", "exit"]
-contract_cmd = ["access", "accept", "fulfill", "completion", "exit"]
+contract_cmd = ["access", "accept", "negotiate", "fulfill", "completion", "exit"]
 
 def navigate(funcs):
     for cmd in funcs:
@@ -57,21 +57,25 @@ def contract(funcs):
     print(funcs)
     for cmd in funcs:
         if cmd in contract_cmd:
-            if cmd != "fulfill":
+            if cmd == "access":
                 data = auth_access("https://api.spacetraders.io/v2/my/contracts")
-                print(len(data["data"]))
-                if cmd == "access":
-                    print("".join(
-                        f"Contract {contracts}:\n" +
-                        "".join(
-                            f"    {detail}: {data['data'][contracts][detail]}\n"
-                            for detail in data["data"][contracts]
-                        )
-                        for contracts in range(len(data["data"]))
-                    ))
-                if cmd == "accept":
-                    for contracts in data["data"]:
-                        auth_access(f"https://api.spacetraders.io/v2/my/contracts/{contracts["id"]}/accept", True)
+                print("".join(
+                    f"Contract {contracts}:\n" +
+                    "".join(
+                        f"    {detail}: {data['data'][contracts][detail]}\n"
+                        for detail in data["data"][contracts]
+                    )
+                    for contracts in range(len(data["data"]))
+                ))
+            elif cmd == "accept":
+                data = auth_access("https://api.spacetraders.io/v2/my/contracts")
+                for contracts in data["data"]:
+                    auth_access(f"https://api.spacetraders.io/v2/my/contracts/{contracts["id"]}/accept", True)
+            elif cmd == "negotiate":
+                data = call_generic_action(f"https://api.spacetraders.io/v2/my/ships/{gva.ship}/negotiate/contract")
+                print(data)
+            elif cmd == "fulfill":
+                print("function currently unavailable")
             elif cmd[0] == "exit":
                 return True
         else:

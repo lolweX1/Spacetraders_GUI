@@ -30,8 +30,6 @@ from SystemCanvas import *
 # PLEASE CHANGE ALL SHIPS GET 0 TO THE SHIP WANTED
 version = "0.32 beta"
 
-print(f"Welcome to Lolwe's UI for Space Trader API\nversion {version}\nTo find functions, please use command \"help\"")
-
 commands_help = {
     "nav": "go into ship navigation mode",
     "engage": "actions that can be done while docked",
@@ -41,21 +39,6 @@ commands_help = {
     "create": "create a window for give object"
 }
 commands = ["nav", "engage", "contract", "create", "cmdqt", "help"]
-
-
-
-try:
-    data = rq.get("https://api.spacetraders.io/v2/my/ships", headers = {"Authorization": "Bearer " + gva.current_auth_token})
-    data = data.json()
-    gva.system = data["data"][0]["nav"]["systemSymbol"] # CHANGE
-    gva.ship = data["data"][0]["symbol"] # CHANGE
-    gva.ship_data = data["data"][0] # CHANGE
-    print("data retrieval successful")
-except:
-    print("Unable to fetch agent data")
-
-fetch_waypoints()
-
 
 def int_convert(s):
     try:
@@ -72,7 +55,6 @@ def parent_options(op, sel):
     else:
         return (op[int_convert(sel)-1] if (int_convert(sel) and int_convert(sel) <= len(op)) else None)
 
-
 def flying_options(sel = None):
     a = parent_options(nav_cmd, sel)
     return a
@@ -88,9 +70,6 @@ def engage_options(sel = None):
 def contract_options(sel = None):
     a = parent_options(contract_cmd, sel)
     return a
-
-cmd = input("command> ")
-cmd_skip = False
 
 def get_ship_data(command):
     command = command.lstrip().split(" ")[1:]
@@ -151,40 +130,29 @@ def determine_prompt(command):
         case "help":
             print("".join(f"{key} - {commands_help[key]}\n" for key in commands_help))
 
-while (cmd != "cmdqt"):
-    cmd = determine_prompt(cmd)
-    if (not cmd_skip):
-        cmd = input("command> ")
+if __name__ == "__main__":
+    print(f"Welcome to Lolwe's UI for Space Trader API\nversion {version}\nTo find functions, please use command \"help\"")
 
-# missions = accessMissions(ID)
-# ships = accessShip(ID)
+    # Intialize all necessary data
+    try:
+        data = rq.get("https://api.spacetraders.io/v2/my/ships", headers = {"Authorization": "Bearer " + gva.current_auth_token})
+        data = data.json()
+        gva.system = data["data"][0]["nav"]["systemSymbol"] # CHANGE, have the ability to select different ships
+        gva.ship = data["data"][0]["symbol"] # CHANGE
+        gva.ship_data = data["data"][0] # CHANGE
+        print("data retrieval successful")
+    except:
+        print("Unable to fetch agent data")
 
-# # check if data and mission work, then assign initial text
-# if (data and missions and ships):
-#     # data that relies on other data
-#     system = accessSystem(ID, ships["data"][0]["nav"]["systemSymbol"])
-#     systemsALL = accessAllSystems(ID)
-#     # assign all CHILDREN children a value
-#     CHILDREN["agentName"] = QLabel("Agent: " + data["data"]["symbol"])
-#     CHILDREN["credits"] = QLabel("Credits: " + str(data["data"]["credits"]))
-#     CHILDREN["missions"] = QLabel("Missions:")
-#     CHILDREN["missions"].setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
-#     CHILDREN["missionExpand"] = QPushButton("\\/")
-#     CHILDREN["missionText"] = QLabel("")
-#     CHILDREN["ships"] = QLabel("ships: " + ships["data"][0]["nav"]["systemSymbol"])
-#     CHILDREN["shipSystem"] = QLabel("system: ")
-#     ORIGIN = [system["data"]["x"], system["data"]["y"]]
-#     CURRENT_SYSTEM_WAYPOINTS.clear()
-#     CURRENT_SYSTEM_WAYPOINTS.extend(system["data"]["waypoints"])
+    # obtain all waypoints within system to make "create" faster
+    fetch_waypoints()
 
-#     CONTRACTS.extend(missions["data"])
+    # begin the prompt process
+    cmd = input("command> ")
+    cmd_skip = False
 
-#     #assign buttons functions
-#     CHILDREN["missionExpand"].clicked.connect(lambda: expandMissions(ID, CHILDREN["missionText"]))
-
-# else:
-#     # if unable to recieve data, close
-#     print("unable to fetch data, closing window")
-#     sys.exit()
-
-
+    # prompt process
+    while (cmd != "cmdqt"):
+        cmd = determine_prompt(cmd)
+        if (not cmd_skip):
+            cmd = input("command> ")

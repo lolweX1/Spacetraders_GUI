@@ -92,8 +92,6 @@ class SystemCanvas(QtWidgets.QWidget):
             painter.drawEllipse(QtCore.QPointF(mx, my), 2, 2)
             painter.drawText(x + 10 - self.center_data_dir[0], y - 10 - self.center_data_dir[1], name)
         
-
-
 class CanvasWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()

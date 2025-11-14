@@ -35,3 +35,7 @@ Also: continue optimization and comments
 9/18/2025
 Player tab now has info
 Reorganized tabs, widgets, and layouts 
+
+11/13/2025
+I completely forgot to log the past few weeks. I removed most of the GUI to create a prompt style UI instead.
+It works pretty well for the most part and I used AI to quickly create a window that can show the stars and the current system. 
