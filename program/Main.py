@@ -192,17 +192,16 @@ def determine_prompt(command):
     
     # grouping the functions in values (variable) because executing them have the same lines of code
     if prompt[0] in values:
-        print(prompt[0])
         if (len(prompt) <= 1):
             values[prompt[0]][0]()
             command = input("select cmd> ")
-            command = values[prompt[0]][0]()(command)
+            command = values[prompt[0]][0](command)
             if (command == None):
                 cmd_skip = True
-                return "None"
-            values[prompt[0]][1]()([command])
+                return "Failure"
+            values[prompt[0]][1]([command])
         else:
-            values[prompt[0]][1]()(prompt[1:])
+            values[prompt[0]][1](prompt[1:])
 
     # seperate miscellanous functions
     match prompt[0]:
@@ -236,5 +235,6 @@ if __name__ == "__main__":
     # prompt process
     while (cmd != "cmdqt"):
         cmd = determine_prompt(cmd)
+        print(cmd)
         if (not cmd_skip):
             cmd = input("command> ")

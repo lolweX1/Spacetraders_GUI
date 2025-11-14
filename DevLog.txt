@@ -39,3 +39,5 @@ Reorganized tabs, widgets, and layouts
 11/13/2025
 I completely forgot to log the past few weeks. I removed most of the GUI to create a prompt style UI instead.
 It works pretty well for the most part and I used AI to quickly create a window that can show the stars and the current system. 
+Organized the code in Main as well
+To Do: organize the rest of the code

@@ -80,6 +80,23 @@ def get_generic_data(url):
         print("Unable to fetch data:", e)
         return None
 
+def call_generic_action(url):
+    try:
+        headers = {"Authorization": f"Bearer {gva.current_auth_token}"}
+
+        response = rq.post(url, headers=headers)
+
+        data = response.json()
+
+        if "error" in data:
+            print(f"Error {data['statusCode']}: {data['error']} - {data['message']}")
+            return None
+
+        return data
+    except Exception as e:
+        print("Unable to fetch data:", e)
+        return None
+
 def authorize_ship_market(url, gd, am):
     try:
         headers = {"Authorization": f"Bearer {gva.current_auth_token}"}
