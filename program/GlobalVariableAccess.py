@@ -14,6 +14,8 @@ ship = None
 ship_data = None
 system = None
 
+system_waypoints = {}
+
 ORIGIN = []
 CURRENT_SYSTEM_WAYPOINTS = []
 ALL_SYSTEMS = {}

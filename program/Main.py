@@ -4,6 +4,7 @@ import GlobalVariableAccess as gva
 import re
 from Prompts import *
 from Authorize import *
+from SystemCanvas import *
 # from PyQt6.QtCore import QTimer, Qt
 # from PyQt6.QtWidgets import (QApplication, QWidget, QMainWindow, QPushButton, 
 #                              QVBoxLayout, QLabel, QPushButton, QHBoxLayout, 
@@ -35,9 +36,13 @@ commands_help = {
     "nav": "go into ship navigation mode",
     "engage": "actions that can be done while docked",
     "cmdqt": "exit the UI",
-    "subfunctions": "use \"-\" to call multiple subfunctions at once and use \"--\" to put in parameters for each subfunction\nex: nav -navigate --[name of destination]"
+    "contract": "access contract functions",
+    "subfunctions": "use \"-\" to call multiple subfunctions at once and use \"--\" to put in parameters for each subfunction\nex: nav -navigate --[name of destination]",
+    "create": "create a window for give object"
 }
-commands = ["nav", "engage", "cmdqt", "help"]
+commands = ["nav", "engage", "contract", "create", "cmdqt", "help"]
+
+
 
 try:
     data = rq.get("https://api.spacetraders.io/v2/my/ships", headers = {"Authorization": "Bearer " + gva.current_auth_token})
@@ -48,6 +53,8 @@ try:
     print("data retrieval successful")
 except:
     print("Unable to fetch agent data")
+
+fetch_waypoints()
 
 
 def int_convert(s):
@@ -67,18 +74,19 @@ def parent_options(op, sel):
 
 
 def flying_options(sel = None):
-    op = ["orbit", "navigate", "dock", "status", "exit"]
-    a = parent_options(op, sel)
+    a = parent_options(nav_cmd, sel)
     return a
 
 def scan_options(sel = None):
-    op = ["waypoints", "ships", "systems", "exit"]
-    a = parent_options(op, sel)
+    a = parent_options(scan_cmd, sel)
     return a
 
 def engage_options(sel = None):
-    op = ["extract", "cooldown", "exit"]
-    a = parent_options(op, sel)
+    a = parent_options(engage_cmd, sel)
+    return a
+
+def contract_options(sel = None):
+    a = parent_options(contract_cmd, sel)
     return a
 
 cmd = input("command> ")
@@ -105,6 +113,10 @@ def determine_prompt(command):
         get_ship_data(command)
         update_ship_data()
         return ""
+    if ("fetch" in command):
+        cmd = cmd.split("-", 1)
+        data = get_generic_data(cmd[1])
+        print(data)
     
     prompt = re.split("(?<= )-(?!-)", command)
     prompt = [i.replace(" ", "") for i in prompt]
@@ -126,6 +138,16 @@ def determine_prompt(command):
                 engage([command])
             else:
                 engage(prompt[1:])
+        case "contract":
+            if (len(prompt) <= 1):
+                contract_options()
+                command = input("select cmd> ")
+                command = contract_options(command)
+                contract([command])
+            else:
+                contract(prompt[1:])
+        case "create":
+            create(prompt[1:] if len(prompt) > 1 else ["system"])
         case "help":
             print("".join(f"{key} - {commands_help[key]}\n" for key in commands_help))
 
