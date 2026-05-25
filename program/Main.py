@@ -7,6 +7,8 @@ from Authorize import *
 from SystemCanvas import *
 from Automation import *
 from PromptBreakdown import *
+import json
+from Login import *
 
 version = "0.412 beta"
 
@@ -27,9 +29,17 @@ commands = ["nav", "engage", "contract", "create", "chart", "cmdqt", "help"]
 if __name__ == "__main__":
     print(f"Welcome to Lolwe's UI for Space Trader API\nversion {version}\nTo find functions, please use command \"help\"")
 
+    app = QApplication(sys.argv)
+
+    # login = LoginWindow()
+    # login.show()
+
+    # sys.exit(app.exec())
+
+    
     # Intialize all necessary data
     try:
-        data = rq.get("https://api.spacetraders.io/v2/my/ships", headers = {"Authorization": "Bearer " + gva.current_auth_token})
+        data = rq.get("https://api.spacetraders.io/v2/my/ships", headers = {"Authorization": "Bearer " + user_account_data["account-token"]})
         data = data.json()
         print(f"data retrieval: {data}")
         gva.system = data["data"][0]["nav"]["systemSymbol"] # CHANGE, have the ability to select different ships

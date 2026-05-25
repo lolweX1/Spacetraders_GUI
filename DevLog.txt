@@ -55,3 +55,7 @@ Created a GUI that:
   updates data
   change ship status and travel
   give ship details
+
+4/21/2026
+Revamping GUI and reorganizing code. Created a proper login page, modifying Authorize.py
+Eg: changed the generic functions to GET and POST

@@ -5,6 +5,32 @@ import re
 from Prompts import *
 import math
 
+def GET(url, authorization, h = {}):
+    try:
+        headers = {"Authorization": f"Bearer {authorization}"} | h
+        response = rq.get(url, headers=headers)
+        return response.json()
+    except Exception as e:
+        print("Unable to fetch data:", e)
+        return None
+
+def POST(url, authorization, h = {}):
+    try:
+        headers = {"Authorization": f"Bearer {authorization}"} | h
+        response = rq.post(url, headers=headers)
+        data = response.json()
+        return data
+    except Exception as e:
+        print("Unable to fetch data:", e)
+        return None
+
+
+
+# ==========================
+# completely remodification, do not use below
+# ==========================
+
+
 def auth_access(li, post = False, bd = None):
     try:
         headers = {"Authorization": f"Bearer {gva.current_auth_token}"}
@@ -63,40 +89,6 @@ def authorize_ship_nav(op, loc = None):
     else: success = access()
     return success
 
-def get_generic_data(url):
-    try:
-        headers = {"Authorization": f"Bearer {gva.current_auth_token}"}
-
-        response = rq.get(url, headers=headers)
-
-        data = response.json()
-
-        if "error" in data:
-            print(f"Error {data['statusCode']}: {data['error']} - {data['message']}")
-            return None
-
-        return data
-    except Exception as e:
-        print("Unable to fetch data:", e)
-        return None
-
-def call_generic_action(url):
-    try:
-        headers = {"Authorization": f"Bearer {gva.current_auth_token}"}
-
-        response = rq.post(url, headers=headers)
-
-        data = response.json()
-
-        if "error" in data:
-            print(f"{data}")
-            return None
-
-        return data
-    except Exception as e:
-        print("Unable to fetch data:", e)
-        return None
-
 def authorize_ship_market(url, gd, am):
     try:
         headers = {"Authorization": f"Bearer {gva.current_auth_token}"}
@@ -121,14 +113,14 @@ def update_ship_data():
     gva.ship_data = auth_access(f"https://api.spacetraders.io/v2/my/ships/{gva.ship}")["data"]
 
 def fetch_waypoints():
-    data = get_generic_data(f"https://api.spacetraders.io/v2/systems/{gva.system}/waypoints?page=1&limit=20")
+    data = GET(f"https://api.spacetraders.io/v2/systems/{gva.system}/waypoints?page=1&limit=20")
     for waypoint in data["data"]:
         gva.system_waypoints[waypoint["symbol"]] = [waypoint["x"], waypoint["y"]]
     pages_max = math.ceil(data["meta"]["total"]/20)
     page = 1
     while page < pages_max:
         page += 1
-        data = get_generic_data(f"https://api.spacetraders.io/v2/systems/{gva.system}/waypoints?page={page}&limit=20")
+        data = POST(f"https://api.spacetraders.io/v2/systems/{gva.system}/waypoints?page={page}&limit=20")
         for waypoint in data["data"]:
             print(f"x: {waypoint["x"]}, y: {waypoint["y"]}")
             gva.system_waypoints[waypoint["symbol"]] = [waypoint["x"], waypoint["y"]]

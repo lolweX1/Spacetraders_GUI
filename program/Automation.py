@@ -8,7 +8,15 @@ from SystemCanvas import *
 from PromptBreakdown import *
 
 def withinCompletition(**kwargs):
-    pass
+    pass 
+
+def determine_path(**kwargs):
+    pos = kwargs["pos"]
+    for i in gva.system_waypoints:
+        if i in kwargs["travelled"]:
+            continue
+        pass
+
 
 def navigate_to_closest_waypoint(**kwargs):
     waypoints = calc_nearby_waypoints(str(kwargs["dist"]))
